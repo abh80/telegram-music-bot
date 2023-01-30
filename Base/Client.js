@@ -52,7 +52,7 @@ export default class Client extends TelegramClient {
    */
   createPlayer(chat) {
     const player = new Player(this, chat);
-    this.players.set(parseInt(chat.id), player);
+    this.players.set(parseInt(chat), player);
     return player;
   }
 }

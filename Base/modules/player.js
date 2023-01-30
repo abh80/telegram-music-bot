@@ -12,7 +12,7 @@ export default class Player {
    */
   constructor(client, chat) {
     this.chat = chat;
-    this.chat_id = chat.id;
+    this.chat_id = chat
     this.client = client;
     this.call = new GramTGCalls(client, this.chat_id);
     this.call.on("audio-finish", this.onAudioFinish.bind(this));
@@ -35,7 +35,6 @@ export default class Player {
         message: `Succefully queued song **${video.title}** by **${video.channel?.name}**`,
       });
       this.queue.push(video);
-
       return;
     }
     this.queue.push(video);

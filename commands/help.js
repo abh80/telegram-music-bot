@@ -18,10 +18,10 @@ export default class PlayCommand extends Command {
   async run(m, args) {
     m.message.reply({
       message:
-        "The following commands are available at the moment:- \n" +
+        "help Menu:- \nAll commands must start with **!**           \nEx: !play there for you\n\n" +
         Array.from(this.client.commands.values())
           .filter((x) => !x.opts.ownerOnly)
-          .map((x) => `**${x.opts.name}** - ${x.opts.description}`),
+          .map((x) => `**${x.opts.name}** - ${x.opts.description}`).join("\n"),
     });
   }
 }

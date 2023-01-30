@@ -48,8 +48,8 @@ export default class PlayCommand extends Command {
         { message: "Not found" },
         3000
       );
-    let player = this.client.players.get(parseInt(m.message.chat?.id));
-    if (!player) player = this.client.createPlayer(m.message.chat);
+    let player = this.client.players.get(parseInt(m.chatId));
+    if (!player) player = this.client.createPlayer(parseInt(m.chatId));
     player.enqueue(video);
   }
 }

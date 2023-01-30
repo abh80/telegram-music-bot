@@ -16,8 +16,7 @@ export default class PlayCommand extends Command {
    * @param {Array<string>} args
    */
   async run(m, args) {
-
-    if (!this.client.players.has(parseInt(m.message.chat?.id))) {
+    if (!this.client.players.has(parseInt(m.chatId))) {
       this.client.sendMessageAndDelete(
         m.message,
         {
@@ -27,7 +26,7 @@ export default class PlayCommand extends Command {
       );
       return;
     }
-    let player = this.client.players.get(parseInt(m.message.chat?.id));
+    let player = this.client.players.get(parseInt(m.chatId));
     if (player) {
       player.toggleNightcore();
     }
