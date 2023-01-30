@@ -1,0 +1,16 @@
+{
+  "name": "music-boat",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "input": "^1.0.1",
+    "telegram": "^2.15.5",
+    "tgcalls-next": "^0.0.0-rc.18",
+    "youtube-sr": "^4.3.4",
+    "ytdl-core": "^4.11.2"
+  }
+}
