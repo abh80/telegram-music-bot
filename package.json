@@ -10,7 +10,11 @@
     "input": "^1.0.1",
     "telegram": "^2.15.5",
     "tgcalls-next": "^0.0.0-rc.18",
+    "ws": "^8.12.0",
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.2"
+  },
+  "devDependencies": {
+    "node-rsa": "^1.1.1"
   }
 }

@@ -1,3 +1,7 @@
 node_modules
 id_rsa
 .ssh/
+.env
+session.txt
+storage/
+docker_cmd.txt

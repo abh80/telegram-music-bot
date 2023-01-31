@@ -3,3 +3,5 @@ node_modules/
 session.txt
 accountKey.json
 yarn.lock
+storage/
+docker_cmd.txt
