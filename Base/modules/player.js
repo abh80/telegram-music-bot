@@ -1,6 +1,6 @@
 import Ffmpeg from "fluent-ffmpeg";
 import Client from "./../Client.js";
-import { GramTGCalls, Stream } from "tgcalls-next";
+import { GramTGCalls } from "tgcalls-next";
 import { Video } from "youtube-sr";
 import ytdl from "ytdl-core";
 
@@ -12,12 +12,13 @@ export default class Player {
    */
   constructor(client, chat) {
     this.chat = chat;
-    this.chat_id = chat
+    this.chat_id = chat;
     this.client = client;
     this.call = new GramTGCalls(client, this.chat_id);
     this.call.on("audio-finish", this.onAudioFinish.bind(this));
     this.call.on("call-discarded", this.destroy.bind(this));
     this.call.on("audio-error", this.destroy.bind(this));
+    this.djs = [];
     this.settings = {
       nightcore: false,
       bassboost: false,
@@ -30,6 +31,7 @@ export default class Player {
    * @param {*} requester
    */
   enqueue(video, requester) {
+    video.requester = requester;
     if (this.queue.length) {
       this.client.bot.sendMessage(this.chat, {
         message: `Succefully queued song **${video.title}** by **${video.channel?.name}**`,
@@ -41,10 +43,34 @@ export default class Player {
 
     this.play();
   }
-
-  play(ignore) {
+  pause() {
+    const f = this.call.pause();
+    if (!f)
+      return this.client.bot.sendMessage(this.chat_id, {
+        message: "⏸️ Player is already paused",
+      });
+    else
+      return this.client.bot.sendMessage(this.chat_id, {
+        message: "⏸️ Player is paused",
+      });
+  }
+  resume() {
+    const f = this.call.resume();
+    if (!f)
+      return this.client.bot.sendMessage(this.chat_id, {
+        message: "▶️ Player is already playing",
+      });
+    else
+      return this.client.bot.sendMessage(this.chat_id, {
+        message: "▶️ Player is playing now!",
+      });
+  }
+  async play(ignore) {
     if (!this.queue.length) return this.destroy();
     let item = this.queue[0];
+    if (item.requester) {
+      item.requester = await this.client.getEntity(item.requester);
+    }
     const url = `https://www.youtube.com/watch?v=${item.id}`;
     const stream = ytdl(url, {
       filter: "audioonly",
@@ -60,12 +86,25 @@ export default class Player {
       filters.push("asetrate=60000");
       filters.push("aresample=48000");
     }
+
     audio.audioFilters(filters);
-    audio.on("error", () => {});
+    audio.on("error", () => {
+      audio.kill();
+    });
     let output = audio.pipe();
+    output.on("close", () => audio.kill());
     if (!ignore)
       this.client.bot.sendMessage(this.chat, {
-        message: `Started playing track **${item.title}** by **${item.channel?.name}**`,
+        message: `Started playing track <b>${item.title}</b> by <b>${
+          item.channel?.name
+        }</b>\n\nRequested by: ${
+          item.requester
+            ? `<a href="tg://user?id=${parseInt(item.requester.id)}">${
+                item.requester.firstName
+              }</a>`
+            : "Someone ig?"
+        }`,
+        parseMode: "html",
       });
     this.call.stream({ audio: output });
   }
@@ -86,6 +125,34 @@ export default class Player {
   }
   destroy() {
     this.call.stop();
+    this.call.removeAllListeners();
     this.client.players.delete(parseInt(this.chat_id));
+  }
+  async skip(user) {
+    if (!this.queue.length) return "Something went wrong";
+    if (this.queue.length <= 1) return "Nothing is queued next, cant skip";
+    let isUserAdmin = this.djs.find((x) => parseInt(x) == parseInt(user));
+    if (!isUserAdmin) {
+      isUserAdmin = await this.client.utils.checkIfUserAdmin(
+        this.chat_id,
+        user,
+        this.client
+      );
+      if (isUserAdmin) this.djs.push(user);
+    }
+    if (!isUserAdmin) {
+      if (
+        typeof this.queue[0]?.requester == "object" &&
+        parseInt(this.queue[0].requester?.id) != parseInt(user)
+      )
+        return "Tracks can only be skipped by DJs or the ones who requested them";
+      this._skip();
+      return "Track will be skipped ⏩";
+    }
+    this._skip();
+    return "Track will be skipped ⏩";
+  }
+  _skip() {
+    this.onAudioFinish();
   }
 }

@@ -50,6 +50,6 @@ export default class PlayCommand extends Command {
       );
     let player = this.client.players.get(parseInt(m.chatId));
     if (!player) player = this.client.createPlayer(parseInt(m.chatId));
-    player.enqueue(video);
+    player.enqueue(video, m.message.senderId);
   }
 }

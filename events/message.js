@@ -8,7 +8,6 @@ import Client from "../Base/Client.js";
 export default function handleMessage(evt, client) {
   let prefix = "!";
   let text = evt.message.text;
-
   if (!text.startsWith(prefix)) return;
   text = text.slice(1);
   const message = text.split(" ");
