@@ -69,7 +69,7 @@ export default class Player {
     if (!this.queue.length) return this.destroy();
     let item = this.queue[0];
     if (item.requester) {
-      item.requester = await this.client.getEntity(item.requester);
+      item.requester = await this.client.bot.getEntity(item.requester);
     }
     const url = `https://www.youtube.com/watch?v=${item.id}`;
     const stream = ytdl(url, {
