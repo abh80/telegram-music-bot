@@ -155,4 +155,19 @@ export default class Player {
   _skip() {
     this.onAudioFinish();
   }
+  addDj(user) {
+    this.djs.push(user)
+  }
+  async isDj(user) {
+    let isUserAdmin = this.djs.find((x) => parseInt(x) == parseInt(user));
+    if (!isUserAdmin) {
+      isUserAdmin = await this.client.utils.checkIfUserAdmin(
+        this.chat_id,
+        user,
+        this.client
+      );
+      if (isUserAdmin) this.djs.push(user);
+    }
+    return isUserAdmin != null;
+  }
 }

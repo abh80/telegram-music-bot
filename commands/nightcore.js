@@ -13,7 +13,7 @@ export default class PlayCommand extends Command {
   /**
    *
    * @param {NewMessageEvent} m
-   * @param {Array<string>} args
+   * @param {Array<satring>} args
    */
   async run(m, args) {
     if (!this.client.players.has(parseInt(m.chatId))) {
